@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ SITE_NAME }} | Local Plumbers You Can Trust{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Luke The Plumber — Gas Safe registered plumbing and heating engineers covering London and the Home Counties. 24/7 emergency call-outs, no call-out fee.{% endblock %}">
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <!-- Top utility bar -->
+    <div class="topbar">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap py-1">
+            <div class="topbar-left">
+                <span><i class="bi bi-geo-alt-fill"></i> Serving London &amp; the Home Counties</span>
+                <span class="ms-3 d-none d-md-inline"><i class="bi bi-patch-check-fill"></i> Gas Safe Registered No. {{ SITE_GAS_SAFE_NUMBER }}</span>
+            </div>
+            <div class="topbar-right">
+                <a href="mailto:{{ SITE_EMAIL }}"><i class="bi bi-envelope-fill"></i> {{ SITE_EMAIL }}</a>
+                <a href="tel:{{ SITE_PHONE|cut:' ' }}" class="ms-3"><i class="bi bi-telephone-fill"></i> {{ SITE_PHONE }}</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main navigation -->
+    <nav class="navbar navbar-expand-lg main-navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:home' %}">
+                <i class="bi bi-wrench-adjustable-circle-fill brand-icon"></i>
+                <span class="brand-text">Luke <strong>The Plumber</strong></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'core:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'service_list' %}active{% endif %}" href="{% url 'core:service_list' %}">Services</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'core:about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'core:contact' %}">Contact</a></li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff %}
+                            <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'staff_dashboard' or request.resolver_match.url_name == 'staff_quote_detail' %}active{% endif %}" href="{% url 'core:staff_dashboard' %}"><i class="bi bi-speedometer2"></i> Staff Dashboard</a></li>
+                        {% endif %}
+                        <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'accounts:profile' %}"><i class="bi bi-person-circle"></i> My Account</a></li>
+                        <li class="nav-item">
+                            <form action="{% url 'accounts:logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link border-0 bg-transparent logout-btn">Log out</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Log in</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
+                    {% endif %}
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                        <a href="{% url 'core:contact' %}" class="btn btn-cta">Get a Free Quote</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Page content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container py-5">
+            <div class="row gy-4">
+                <div class="col-lg-4">
+                    <a href="{% url 'core:home' %}" class="navbar-brand mb-3 d-inline-block">
+                        <i class="bi bi-wrench-adjustable-circle-fill brand-icon"></i>
+                        <span class="brand-text">Luke <strong>The Plumber</strong></span>
+                    </a>
+                    <p class="text-light-muted">
+                        Gas Safe registered, fully insured plumbing and heating engineers
+                        serving London and the Home Counties since 2009. No call-out fee,
+                        upfront pricing, and a 12-month guarantee on all our work.
+                    </p>
+                    <div class="footer-badges">
+                        <span><i class="bi bi-patch-check-fill"></i> Gas Safe Registered</span>
+                        <span><i class="bi bi-shield-fill-check"></i> Fully Insured</span>
+                        <span><i class="bi bi-star-fill"></i> Rated 4.9/5 by customers</span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-6">
+                    <h6 class="footer-heading">Company</h6>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'core:about' %}">About Us</a></li>
+                        <li><a href="{% url 'core:service_list' %}">Our Services</a></li>
+                        <li><a href="{% url 'core:contact' %}">Contact</a></li>
+                        <li><a href="{% url 'accounts:register' %}">Create an Account</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <h6 class="footer-heading">Services</h6>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'core:service_list' %}">Emergency Plumbing</a></li>
+                        <li><a href="{% url 'core:service_list' %}">Boiler Repair</a></li>
+                        <li><a href="{% url 'core:service_list' %}">Bathroom Installation</a></li>
+                        <li><a href="{% url 'core:service_list' %}">Drain Unblocking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="footer-heading">Get in touch</h6>
+                    <ul class="footer-links">
+                        <li><i class="bi bi-geo-alt-fill"></i> {{ SITE_ADDRESS }}</li>
+                        <li><i class="bi bi-telephone-fill"></i> <a href="tel:{{ SITE_PHONE|cut:' ' }}">{{ SITE_PHONE }}</a></li>
+                        <li><i class="bi bi-lightning-charge-fill"></i> 24/7 Emergency: <a href="tel:{{ SITE_EMERGENCY_PHONE|cut:' ' }}">{{ SITE_EMERGENCY_PHONE }}</a></li>
+                        <li><i class="bi bi-envelope-fill"></i> <a href="mailto:{{ SITE_EMAIL }}">{{ SITE_EMAIL }}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom py-3">
+            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <span>&copy; {% now "Y" %} Luke The Plumber Ltd. All rights reserved.</span>
+                <span>Registered in England &amp; Wales. Company No. 12345678.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky mobile call button -->
+    <a href="tel:{{ SITE_EMERGENCY_PHONE|cut:' ' }}" class="mobile-call-btn d-lg-none">
+        <i class="bi bi-telephone-fill"></i> Call Now
+    </a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
