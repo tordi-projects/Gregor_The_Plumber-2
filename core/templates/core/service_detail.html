@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}{{ service.name }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ service.short_description }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3" style="--bs-breadcrumb-divider: '›';">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-light-muted">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'core:service_list' %}" class="text-light-muted">Services</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ service.name }}</li>
+            </ol>
+        </nav>
+        <h1>{{ service.name }}</h1>
+        <p>{{ service.short_description }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-8">
+                {% if service.is_emergency %}<span class="badge-emergency mb-3 d-inline-block">24/7 Emergency Service</span>{% endif %}
+                <div class="service-icon mb-3"><i class="bi {{ service.icon }}"></i></div>
+                <h2 class="section-title" style="font-size:1.6rem;">About this service</h2>
+                <p class="text-muted" style="white-space: pre-line;">{{ service.description }}</p>
+
+                <div class="row g-3 mt-4">
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2"><i class="bi bi-check-circle-fill text-warning"></i> Upfront, fixed-price quotes</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2"><i class="bi bi-check-circle-fill text-warning"></i> Gas Safe &amp; fully insured engineers</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2"><i class="bi bi-check-circle-fill text-warning"></i> 12-month workmanship guarantee</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-2"><i class="bi bi-check-circle-fill text-warning"></i> Clean, tidy, and on time</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="form-card">
+                    <h5 class="mb-2">Interested in this service?</h5>
+                    {% if service.price_from %}<p class="price-from mb-3">Prices from £{{ service.price_from|floatformat:0 }}</p>{% endif %}
+                    <a href="{% url 'core:contact' %}?service={{ service.slug }}" class="btn btn-cta w-100 mb-2">Get a Free Quote</a>
+                    <a href="tel:{{ SITE_PHONE|cut:' ' }}" class="btn btn-primary-navy w-100"><i class="bi bi-telephone-fill"></i> {{ SITE_PHONE }}</a>
+                </div>
+
+                {% if other_services %}
+                <div class="mt-4">
+                    <h6 class="footer-heading text-navy" style="color:var(--navy-900);">Other services</h6>
+                    <ul class="footer-links" style="--bs-body-color:#333;">
+                        {% for s in other_services %}
+                        <li><a href="{{ s.get_absolute_url }}" style="color: var(--navy-800);">{{ s.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

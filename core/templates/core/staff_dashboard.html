@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Staff Dashboard | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <h1><i class="bi bi-speedometer2"></i> Staff Dashboard</h1>
+            <p class="mb-0">Private area — visible only to staff accounts.</p>
+        </div>
+        <div class="d-flex gap-3">
+            <div class="text-center">
+                <div class="fs-3 fw-bold text-warning">{{ new_count }}</div>
+                <div class="small text-light-muted">New enquiries</div>
+            </div>
+            <div class="text-center">
+                <div class="fs-3 fw-bold text-danger">{{ emergency_count }}</div>
+                <div class="small text-light-muted">Open emergencies</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <a href="{% url 'core:staff_dashboard' %}" class="btn btn-sm {% if not status_filter %}btn-primary-navy{% else %}btn-outline-secondary{% endif %}">All</a>
+            {% for value, label in status_choices %}
+                <a href="?status={{ value }}" class="btn btn-sm {% if status_filter == value %}btn-primary-navy{% else %}btn-outline-secondary{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+
+        {% if quote_requests %}
+        <div class="table-responsive">
+            <table class="table align-middle table-hover bg-white">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in quote_requests %}
+                    <tr>
+                        <td>{{ q.created_at|date:"d M Y, H:i" }}</td>
+                        <td>
+                            <div class="fw-semibold">
+                                {{ q.full_name }}
+                                {% if q.is_emergency %}<span class="badge-emergency ms-1">Emergency</span>{% endif %}
+                            </div>
+                            <div class="small text-muted">{{ q.phone }}{% if q.whatsapp_notified %} &middot; <i class="bi bi-whatsapp text-success"></i>{% endif %}</div>
+                        </td>
+                        <td>{{ q.service.name|default:"General enquiry" }}</td>
+                        <td>
+                            <span class="badge {% if q.status == 'new' %}bg-warning text-dark{% elif q.status == 'completed' %}bg-success{% elif q.status == 'cancelled' %}bg-danger{% else %}bg-primary{% endif %}">
+                                {{ q.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'core:staff_quote_detail' q.pk %}" class="btn btn-sm btn-primary-navy">View &amp; Reply</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No quote requests match this filter yet.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

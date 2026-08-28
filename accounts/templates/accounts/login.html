@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Log In | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="auth-card form-card">
+            <div class="text-center mb-4">
+                <i class="bi bi-wrench-adjustable-circle-fill brand-icon" style="font-size:2.5rem;"></i>
+                <h3 class="mt-2">Welcome Back</h3>
+                <p class="text-muted">Log in to view and track your quote requests.</p>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.username.id_for_label }}">Username</label>
+                    <input type="text" name="{{ form.username.html_name }}" class="form-control" id="{{ form.username.id_for_label }}" required autofocus>
+                    {{ form.username.errors }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.password.id_for_label }}">Password</label>
+                    <input type="password" name="{{ form.password.html_name }}" class="form-control" id="{{ form.password.id_for_label }}" required>
+                    {{ form.password.errors }}
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-cta w-100 btn-lg">Log In</button>
+            </form>
+            <p class="text-center text-muted mt-4 mb-0">
+                Don't have an account? <a href="{% url 'accounts:register' %}" class="fw-semibold">Register here</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

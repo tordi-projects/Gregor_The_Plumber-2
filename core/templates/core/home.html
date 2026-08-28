@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-7">
+                <span class="hero-badge"><i class="bi bi-lightning-charge-fill"></i> 24/7 Emergency Call-Outs</span>
+                <h1>Local Plumbers <span>You Can Rely On</span> — Anywhere in London &amp; the Home Counties</h1>
+                <p class="lead">
+                    Gas Safe registered engineers for boiler repairs, bathroom installs,
+                    leak detection and everyday plumbing. Upfront pricing, no call-out
+                    fee, and a friendly local team who turn up when they say they will.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <a href="{% url 'core:contact' %}" class="btn btn-cta btn-lg"><i class="bi bi-chat-square-text-fill"></i> Get a Free Quote</a>
+                    <a href="tel:{{ SITE_EMERGENCY_PHONE|cut:' ' }}" class="btn btn-outline-navy btn-lg"><i class="bi bi-telephone-fill"></i> Call {{ SITE_EMERGENCY_PHONE }}</a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Years trading</span>
+                    </div>
+                    <div>
+                        <span class="stat-number">4.9/5</span>
+                        <span class="stat-label">Average customer rating</span>
+                    </div>
+                    <div>
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Emergency call-outs</span>
+                    </div>
+                    <div>
+                        <span class="stat-number">£0</span>
+                        <span class="stat-label">Call-out fee</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-panel">
+                    <h4 class="mb-1"><i class="bi bi-clipboard2-check-fill text-warning"></i> Request a Callback</h4>
+                    <p class="text-muted mb-4">Tell us what's wrong and we'll call you back — usually within 15 minutes during working hours.</p>
+                    <form method="post" action="{% url 'core:contact' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" name="full_name" class="form-control" placeholder="Full name" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="tel" name="phone" class="form-control" placeholder="Phone number" required>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="message" class="form-control" rows="3" placeholder="Briefly describe the job" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary-navy w-100">Send Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST STRIP -->
+<section class="trust-strip">
+    <div class="container">
+        <div class="row gy-3">
+            <div class="col-md-3 col-6"><div class="trust-item"><i class="bi bi-patch-check-fill"></i> Gas Safe Registered</div></div>
+            <div class="col-md-3 col-6"><div class="trust-item"><i class="bi bi-shield-fill-check"></i> Fully Insured</div></div>
+            <div class="col-md-3 col-6"><div class="trust-item"><i class="bi bi-cash-coin"></i> No Call-Out Fee</div></div>
+            <div class="col-md-3 col-6"><div class="trust-item"><i class="bi bi-award-fill"></i> 12-Month Guarantee</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-7">
+                <div class="section-title-eyebrow">What we do</div>
+                <h2 class="section-title">Plumbing &amp; Heating Services Across England</h2>
+                <p class="section-subtitle">From a dripping tap to a full bathroom refit, our engineers handle jobs of every size — done properly, first time.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card">
+                    {% if service.is_emergency %}<span class="badge-emergency mb-2 d-inline-block">24/7 Emergency</span>{% endif %}
+                    <div class="service-icon"><i class="bi {{ service.icon }}"></i></div>
+                    <h5>{{ service.name }}</h5>
+                    <p class="text-muted">{{ service.short_description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if service.price_from %}<span class="price-from">From £{{ service.price_from|floatformat:0 }}</span>{% else %}<span></span>{% endif %}
+                        <a href="{{ service.get_absolute_url }}" class="fw-semibold">Learn more <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted">Services will appear here once added — run <code>python manage.py seed_data</code> to load example services.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'core:service_list' %}" class="btn btn-primary-navy">View All Services</a>
+        </div>
+    </div>
+</section>
+
+<!-- EMERGENCY BANNER -->
+<section class="section pt-0">
+    <div class="container">
+        <div class="emergency-banner">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-8">
+                    <h3><i class="bi bi-exclamation-triangle-fill text-warning"></i> Got a plumbing emergency?</h3>
+                    <p class="text-light-muted mb-0">Burst pipe, no heating, or a serious leak? Our emergency plumbers are on call 24 hours a day, every day of the year, across London and the Home Counties.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="tel:{{ SITE_EMERGENCY_PHONE|cut:' ' }}" class="btn btn-cta btn-lg"><i class="bi bi-telephone-fill"></i> {{ SITE_EMERGENCY_PHONE }}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-alt">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-7">
+                <div class="section-title-eyebrow">How it works</div>
+                <h2 class="section-title">Getting Your Job Booked Is Simple</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-number">1</div>
+                <h5>Tell us the problem</h5>
+                <p class="text-muted">Call us or fill in our quick online form with a few details about the job.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="step-number">2</div>
+                <h5>Get an upfront price</h5>
+                <p class="text-muted">We'll give you a clear, fixed price before any work begins — no surprises.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="step-number">3</div>
+                <h5>Job done properly</h5>
+                <p class="text-muted">A qualified, background-checked engineer completes the work and tidies up after.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-lg-7">
+                <div class="section-title-eyebrow">Customer reviews</div>
+                <h2 class="section-title">What Our Customers Say</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for t in testimonials %}
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        {% for i in "12345" %}<i class="bi {% if forloop.counter <= t.rating %}bi-star-fill{% else %}bi-star{% endif %}"></i>{% endfor %}
+                    </div>
+                    <p>&ldquo;{{ t.comment }}&rdquo;</p>
+                    <div class="testimonial-name">{{ t.customer_name }}</div>
+                    <div class="testimonial-location">{{ t.location }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted">Customer reviews will appear here once added.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="section section-alt">
+    <div class="container text-center">
+        <h2 class="section-title">Ready to book your plumber?</h2>
+        <p class="section-subtitle mx-auto">Get a free, no-obligation quote today — most jobs can be booked in for the same or next day.</p>
+        <a href="{% url 'core:contact' %}" class="btn btn-cta btn-lg mt-3">Get a Free Quote</a>
+    </div>
+</section>
+
+{% endblock %}

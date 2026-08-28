@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Enquiry from {{ quote_request.full_name }} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3" style="--bs-breadcrumb-divider: '›';">
+                <li class="breadcrumb-item"><a href="{% url 'core:staff_dashboard' %}" class="text-light-muted">Staff Dashboard</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">{{ quote_request.full_name }}</li>
+            </ol>
+        </nav>
+        <h1>
+            {{ quote_request.full_name }}
+            {% if quote_request.is_emergency %}<span class="badge-emergency ms-2">Emergency</span>{% endif %}
+        </h1>
+        <p>Submitted {{ quote_request.created_at|date:"d M Y, H:i" }}</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="form-card mb-4">
+                    <h5 class="mb-3">Job details</h5>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4 text-muted">Phone</dt>
+                        <dd class="col-sm-8">{{ quote_request.phone }}</dd>
+                        <dt class="col-sm-4 text-muted">Email</dt>
+                        <dd class="col-sm-8">{{ quote_request.email }}</dd>
+                        <dt class="col-sm-4 text-muted">Address</dt>
+                        <dd class="col-sm-8">{{ quote_request.address }}</dd>
+                        <dt class="col-sm-4 text-muted">Service</dt>
+                        <dd class="col-sm-8">{{ quote_request.service.name|default:"General enquiry" }}</dd>
+                        <dt class="col-sm-4 text-muted">WhatsApp alert</dt>
+                        <dd class="col-sm-8">
+                            {% if quote_request.whatsapp_notified %}
+                                <span class="text-success"><i class="bi bi-check-circle-fill"></i> Sent</span>
+                            {% else %}
+                                <span class="text-muted"><i class="bi bi-dash-circle"></i> Not sent</span>
+                            {% endif %}
+                        </dd>
+                    </dl>
+                    <hr>
+                    <h6 class="text-muted">Message</h6>
+                    <p class="mb-0" style="white-space: pre-line;">{{ quote_request.message }}</p>
+                </div>
+
+                {% if quote_request.phone %}
+                <a href="{{ quote_request.whatsapp_reply_url }}" target="_blank" rel="noopener" class="btn btn-lg w-100" style="background:#25D366; color:#fff; font-weight:700;">
+                    <i class="bi bi-whatsapp"></i> Message {{ quote_request.full_name }} on WhatsApp
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-5">
+                <div class="form-card">
+                    <h5 class="mb-3">Update &amp; reply</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            {{ form.status }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.admin_reply.label }}</label>
+                            {{ form.admin_reply }}
+                            <div class="form-text">If you write a reply, it's emailed to {{ quote_request.email }} when you save.</div>
+                        </div>
+                        <button type="submit" class="btn btn-cta w-100">Save</button>
+                    </form>
+
+                    {% if quote_request.admin_reply %}
+                    <div class="mt-4 pt-4 border-top">
+                        <h6 class="text-muted">Last reply sent{% if quote_request.replied_at %} — {{ quote_request.replied_at|date:"d M Y, H:i" }}{% endif %}</h6>
+                        <p class="mb-0" style="white-space: pre-line;">{{ quote_request.admin_reply }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Our Services | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1>Our Services</h1>
+        <p>Qualified, Gas Safe registered engineers covering every plumbing and heating job, big or small.</p>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-md-6 col-lg-4">
+                <div class="service-card">
+                    {% if service.is_emergency %}<span class="badge-emergency mb-2 d-inline-block">24/7 Emergency</span>{% endif %}
+                    <div class="service-icon"><i class="bi {{ service.icon }}"></i></div>
+                    <h5>{{ service.name }}</h5>
+                    <p class="text-muted">{{ service.short_description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if service.price_from %}<span class="price-from">From £{{ service.price_from|floatformat:0 }}</span>{% else %}<span></span>{% endif %}
+                        <a href="{{ service.get_absolute_url }}" class="fw-semibold">Learn more <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted">No services added yet. Add some in the Django admin, or run <code>python manage.py seed_data</code>.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container">
+        <div class="emergency-banner">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-8">
+                    <h3><i class="bi bi-exclamation-triangle-fill text-warning"></i> Not sure which service you need?</h3>
+                    <p class="text-light-muted mb-0">Give us a call or send us a message and we'll point you in the right direction — free of charge.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="{% url 'core:contact' %}" class="btn btn-cta btn-lg">Get a Free Quote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
